@@ -3,6 +3,7 @@
 /**
  * Module dependencies.
  */
+console.log("starting...");
 
 import app from "../app.js";
 import debug from "debug";
