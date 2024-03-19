@@ -36,4 +36,4 @@ ENV DATABASE_URL=postgres://user:password@host:port/dbname
 # run the app
 USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "start" ]
+ENTRYPOINT [ "bun", "run", "bin/www.js" ]
