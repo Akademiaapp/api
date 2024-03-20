@@ -49,7 +49,7 @@ router.post("/", function (req, res, next) {
   const user_id = req.user.sub;
   
   // Validate that the user is a teacher
-  prisma.authorizer_users.findFirst({
+  prisma.user.findFirst({
     where: {
       id: user_id,
     },
@@ -99,7 +99,7 @@ router.post("/", function (req, res, next) {
         })
         .then((assignment_data) => {
           // Create assignment answers for all students
-          prisma.authorizer_users
+          prisma.user
             .findMany({
               where: {
                 roles: { contains: "student" },

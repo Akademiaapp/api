@@ -175,7 +175,7 @@ router.put("/:id/users", async function (req, res, next) {
   }
 
   // Get user_id from user_email
-  const user = await prisma.authorizer_users.findFirst({
+  const user = await prisma.user.findFirst({
     where: { email: user_email },
   });
   console.log(user)
@@ -237,7 +237,7 @@ router.get("/:id/users", async function (req, res, next) {
   // Get the actual users from permission
   const users = [];
   permissions.forEach(async (permission) => {
-    const user = await prisma.authorizer_users.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         id: permission.user_id,
       },
@@ -247,7 +247,7 @@ router.get("/:id/users", async function (req, res, next) {
   });
 
   // Add the owner of the document
-  const owner = await prisma.authorizer_users.findFirst({
+  const owner = await prisma.user.findFirst({
     where: {
       id: document.user_id,
     },
