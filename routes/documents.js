@@ -71,7 +71,8 @@ router.post("/", function (req, res, next) {
 
 // Get document - Read
 router.get("/:id", function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
   console.log(id);
   prisma.document
     .findFirst({
@@ -86,7 +87,8 @@ router.get("/:id", function (req, res, next) {
 
 // Get document json - Read
 router.get("/:id/json", function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
   prisma.document
     .findFirst({
       where: {
@@ -105,7 +107,8 @@ router.get("/:id/json", function (req, res, next) {
 
 // Rename document - Update
 router.put("/:id", function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
   const { name } = req.query;
   prisma.document
     .update({
@@ -123,7 +126,8 @@ router.put("/:id", function (req, res, next) {
 
 // Delete document - Delete
 router.delete("/:id", async function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
 
   // Check if the user has access to the document
   const document = await prisma.document.findFirst({
@@ -155,7 +159,8 @@ router.delete("/:id", async function (req, res, next) {
 // Add user to document - Update
 // Create a new document_permissions for a user to the document
 router.put("/:id/users", async function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
   const { user_email } = req.query;
 
   // Check if the user has access to the document
@@ -199,7 +204,9 @@ router.put("/:id/users", async function (req, res, next) {
 
 // Get users with access to document - Read
 router.get("/:id/users", async function (req, res, next) {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = id.split(".")[1];
+  console.log("id", id)
 
   // Check if the user has access to the document, is the owner or has been shared the document
   const document = await prisma.document.findFirst({
@@ -208,6 +215,8 @@ router.get("/:id/users", async function (req, res, next) {
       permissions: true,
     },
   });
+
+  console.log("document", document);
 
   const permission = document.permissions.find((permission) => {
     return permission.user_id == req.user.sub;
@@ -245,15 +254,6 @@ router.get("/:id/users", async function (req, res, next) {
     user.permission = permission.permission;
     users.push(user);
   });
-
-  // Add the owner of the document
-  const owner = await prisma.user.findFirst({
-    where: {
-      id: document.user_id,
-    },
-  });
-  owner.permission = "OWNER";
-  users.push(owner);
 
   res.json(users);
 });
