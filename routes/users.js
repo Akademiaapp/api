@@ -5,7 +5,7 @@ import { prisma } from "../app.js";
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
-  prisma.authorizer_users.findMany().then((data) => {
+  prisma.user.findMany().then((data) => {
     res.json(data);
   });
 });
