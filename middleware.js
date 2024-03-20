@@ -23,9 +23,6 @@ const verifyToken = async (req, res, next) => {
     // Attach user information to the request for further processing
     req.user = response.data;
 
-    // Print the user information
-    console.log("User information:", req.user);
-
     // Move to the next middleware or route handler
     next(); 
   }).catch(error => {
@@ -56,8 +53,6 @@ const verifyUserExists = async (req, res, next) => {
 
   // Attach the user record to the request for further processing
   req.userRecord = userRecord;
-
-  console.log("User record:", userRecord);
 
   // Move to the next middleware or route handler
   next();

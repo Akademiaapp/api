@@ -171,6 +171,11 @@ router.put("/:id/users", async function (req, res, next) {
     },
   });
 
+  if (!document) {
+    res.status(502).json("Document not found");
+    return;
+  }
+
   const permission = document.permissions.find((permission) => {
     return permission.user_id == req.user.sub;
   });
@@ -215,6 +220,11 @@ router.get("/:id/users", async function (req, res, next) {
       permissions: true,
     },
   });
+
+  if (!document) {
+    res.status(502).json("Document not found");
+    return;
+  }
 
   console.log("document", document);
 
