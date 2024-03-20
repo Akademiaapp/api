@@ -39,6 +39,8 @@ app.get('/test_colab', async (req, res, next) => {
 });
 
 app.use(middleware.verifyToken); // Apply the middleware to all routes
+app.use(middleware.verifyUserExists);
+app.use(middleware.verifyUserSettings);
 
 app.use(logger("dev"));
 app.use(express.json());

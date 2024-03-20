@@ -49,8 +49,8 @@ router.post("/", function (req, res, next) {
       data: {
         name: name,
         data: Buffer.from(""),
-        created_at: new Date().getTime(),
-        updated_at: new Date().getTime()
+        created_at: new Date(),
+        updated_at: new Date()
       },
     })
     .then((data) => {
