@@ -82,6 +82,9 @@ router.get("/:id", function (req, res, next) {
     })
     .then((data) => {
       res.json(data);
+    }).catch((error) => {
+      console.error(error);
+      res.status(502).json('Document not found')
     });
 });
 
