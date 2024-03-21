@@ -6,7 +6,6 @@ import logger from "morgan";
 import cors from "cors";
 
 import middleware from "./middleware.js";
-import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 import documentsRouter from "./routes/documents.js";
 import assignmentsRouter from "./routes/assignments.js";
