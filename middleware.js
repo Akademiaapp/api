@@ -38,7 +38,7 @@ const verifyUserExists = async (req, res, next) => {
   const user = req.user;
 
   // log the user
-  logger.log("User: ", user);
+  logger.info("User: ", user);
 
   // Find or create the user in the database
   const userRecord = await prisma.user.upsert({
