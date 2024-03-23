@@ -4,6 +4,8 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
+import pinoElasticsearch from "pino-elasticsearch";
+import pino from "pino";
 
 import middleware from "./middleware.js";
 import usersRouter from "./routes/users.js";
@@ -18,6 +20,21 @@ const __dirname = path.dirname(__filename);
 // Prisma
 import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
+
+const streamToOpenObserve = pinoElasticsearch({
+  index: "logs",
+  node: 'https://logs.akademia.cc/api/default/',
+  "es-version": 7,
+  "flush-bytes": 1000,
+  auth: {
+    username: process.env.OPENOBSERVE_USERNAME,
+    password: process.env.OPENOBSERVE_PASSWORD
+  }
+});
+
+export const logger = pino({
+  level: "info"
+}, streamToOpenObserve);
 
 // Fix bigint issue 
 BigInt.prototype.toJSON = function () {

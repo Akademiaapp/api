@@ -24,7 +24,7 @@ const verifyToken = async (req, res, next) => {
     req.user = response.data;
 
     // Move to the next middleware or route handler
-    next(); 
+    next();
   }).catch(error => {
     console.error("Token verification failed:", error.message);
     return res
@@ -36,6 +36,9 @@ const verifyToken = async (req, res, next) => {
 const verifyUserExists = async (req, res, next) => {
   // Get the user information from the request
   const user = req.user;
+
+  // log the user
+  console.log("User:", user);
 
   // Find or create the user in the database
   const userRecord = await prisma.user.upsert({
