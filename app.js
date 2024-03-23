@@ -2,10 +2,10 @@ import createError from "http-errors";
 import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
-import logger from "morgan";
 import cors from "cors";
 import pinoElasticsearch from "pino-elasticsearch";
 import pino from "pino";
+import { pinoHttp } from "pino-http";
 
 import middleware from "./middleware.js";
 import usersRouter from "./routes/users.js";
@@ -23,9 +23,9 @@ export const prisma = new PrismaClient();
 
 const streamToOpenObserve = pinoElasticsearch({
   index: "logs",
-  node: 'https://logs.akademia.cc/api/default/',
-  "es-version": 7,
-  "flush-bytes": 1000,
+  node: 'https://logs.akademia.cc',
+  esVersion: 7,
+  flushBytes: 1000,
   auth: {
     username: process.env.OPENOBSERVE_USERNAME,
     password: process.env.OPENOBSERVE_PASSWORD
@@ -35,6 +35,10 @@ const streamToOpenObserve = pinoElasticsearch({
 export const logger = pino({
   level: "info"
 }, streamToOpenObserve);
+
+const httpLogger = pinoHttp({
+  logger: logger,
+});
 
 // Fix bigint issue 
 BigInt.prototype.toJSON = function () {
@@ -58,7 +62,7 @@ app.use(middleware.verifyToken); // Apply the middleware to all routes
 app.use(middleware.verifyUserExists);
 app.use(middleware.verifyUserSettings);
 
-app.use(logger("dev"));
+app.use(httpLogger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
