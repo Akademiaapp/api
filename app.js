@@ -49,15 +49,6 @@ var app = express();
 
 app.use(cors()); // Enable CORS
 
-app.get('/test_colab', async (req, res, next) => {
-  const status = await fetch('http://localhost:8090/')
-  if (status.statusText == "OK") {
-    res.status(200).json('All good');
-  } else {
-    res.status(500).json('Not good');
-  }
-});
-
 app.use(middleware.verifyToken); // Apply the middleware to all routes
 app.use(middleware.verifyUserExists);
 app.use(middleware.verifyUserSettings);
