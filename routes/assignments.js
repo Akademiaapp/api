@@ -8,11 +8,13 @@ router.get("/", async function (req, res, next) {
   const user_id = req.user.sub;
   
   try {
-    const assignmentAnswers = await prisma.file_permission.findMany({
+    const assignmentAnswers = await prisma.assignment_answer.findMany({
       where: {
-        user_id: user_id,
+        student_id: user_id,
       },
     });
+
+    console.log("assignmentAnswers: ", assignmentAnswers)
 
     const assignmentPromises = assignmentAnswers.map(async (assignment_status) => {
       try {
@@ -35,8 +37,14 @@ router.get("/", async function (req, res, next) {
     // Clear duplicates
     const uniqueAssignments = filteredAssignments.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
 
-    console.log("total assignments: ", filteredAssignments);
-    res.json(uniqueAssignments);
+    // Add status to each assignment
+    const assignmentsWithStatus = uniqueAssignments.map((assignment) => {
+      const answer = assignmentAnswers.find((answer) => answer.assignment_id === assignment.id);
+      return { ...assignment, status: answer.status, answer_id: answer.id };
+    });
+
+    console.log("total assignments: ", assignmentsWithStatus);
+    res.json(assignmentsWithStatus);
   } catch (error) {
     console.error("Error retrieving assignments:", error);
     res.status(500).json({ error: "Internal Server Error" });

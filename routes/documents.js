@@ -72,12 +72,26 @@ router.post("/", function (req, res, next) {
 // Get document - Read
 router.get("/:id", function (req, res, next) {
   let { id } = req.params;
-  id = id.split(".")[1];
-  console.log(id);
-  prisma.document
+  
+  // Get document type and id from name
+  const documentType = id.split(".")[0];
+  const documentId = id.split(".")[1];
+
+  // Set `document` based on document type
+  let document;
+  if (documentType === "document") {
+    document = prisma.document;
+  } else if (documentType === "assignment") {
+    document = prisma.assignment;
+  } else if (documentType === "assignmentAnswer") {
+    document = prisma.assignment_answer;
+  }
+
+  console.log(documentId);
+  document
     .findFirst({
       where: {
-        id: id,
+        id: documentId,
       },
     })
     .then((data) => {
