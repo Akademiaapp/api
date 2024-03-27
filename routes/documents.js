@@ -249,14 +249,10 @@ router.get("/:id/users", async function (req, res, next) {
     return permission.user_id == req.user.sub;
   });
 
+  console.log("permission!: ", permission)
+
   if (
-    !permission &&
-    !prisma.file_permission.findFirst({
-      where: {
-        user_id: req.user.sub,
-        document_id: id,
-      },
-    })
+    !permission
   ) {
     res
       .status(502)
@@ -264,15 +260,9 @@ router.get("/:id/users", async function (req, res, next) {
     return;
   }
 
-  const permissions = await prisma.file_permission.findMany({
-    where: {
-      document_id: id,
-    },
-  });
-
   // Get the actual users from permission
   const users = [];
-  permissions.forEach(async (permission) => {
+  for (const permission of document.permissions) {
     const user = await prisma.user.findFirst({
       where: {
         id: permission.user_id,
@@ -280,7 +270,7 @@ router.get("/:id/users", async function (req, res, next) {
     });
     user.permission = permission.permission;
     users.push(user);
-  });
+  }
 
   res.json(users);
 });
