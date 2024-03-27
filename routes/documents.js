@@ -64,7 +64,8 @@ router.post("/", function (req, res, next) {
           },
         })
         .then(() => {
-          res.json(data);
+          res.json(data).status(200);
+          return;
         });
     });
 });
@@ -95,10 +96,12 @@ router.get("/:id", function (req, res, next) {
       },
     })
     .then((data) => {
-      res.json(data);
+      res.json(data).status(200);
+      return;
     }).catch((error) => {
       console.error(error);
-      res.status(502).json('Document not found')
+      res.status(400).json('Document not found')
+      return;
     });
 });
 
@@ -118,7 +121,8 @@ router.get("/:id/json", function (req, res, next) {
       ydoc.applyUpdate(data.data)
       let json = yDocToProsemirrorJSON(yjsdoc);
       console.log(json);
-      res.json(json);
+      res.json(json).status(200);
+      return;
     });
 });
 
@@ -137,7 +141,8 @@ router.put("/:id", function (req, res, next) {
       },
     })
     .then((data) => {
-      res.json(data);
+      res.json(data).status(200);
+      return;
     });
 });
 
@@ -159,7 +164,8 @@ router.delete("/:id", async function (req, res, next) {
   });
 
   if (!permission && permission.permission != "OWNER") {
-    throw new Error("Unauthorized - User does not have access to document");
+    res.status(400).json("Unauthorized - User does not have access to document");
+    return;
   }
 
   prisma.document
@@ -169,7 +175,8 @@ router.delete("/:id", async function (req, res, next) {
       },
     })
     .then((data) => {
-      res.json(data);
+      res.json(data).status(200);
+      return;
     });
 });
 
@@ -189,7 +196,7 @@ router.put("/:id/users", async function (req, res, next) {
   });
 
   if (!document) {
-    res.status(502).json("Document not found");
+    res.status(400).json("Document not found");
     return;
   }
 
@@ -198,17 +205,17 @@ router.put("/:id/users", async function (req, res, next) {
   });
 
   if (!permission && permission.permission != "OWNER") {
-    throw new Error("Unauthorized - User does not have access to document");
+    res.status(400).json("Unauthorized - User does not have access to document");
   }
 
   // Get user_id from user_email
   const user = await prisma.user.findFirst({
     where: { email: user_email },
   });
-  console.log(user)
+  console.log("user!: ", user);
   if (!user) {
-    res.status(502).json('User not found')
-
+    res.status(400).json('User not found');
+    return;
   }
 
   prisma.file_permission
@@ -220,7 +227,8 @@ router.put("/:id/users", async function (req, res, next) {
       },
     })
     .then((data) => {
-      res.json(data);
+      res.json(data).status(200);
+      return;
     });
 });
 
@@ -239,7 +247,7 @@ router.get("/:id/users", async function (req, res, next) {
   });
 
   if (!document) {
-    res.status(502).json("Document not found");
+    res.status(400).json("Document not found");
     return;
   }
 
@@ -255,7 +263,7 @@ router.get("/:id/users", async function (req, res, next) {
     !permission
   ) {
     res
-      .status(502)
+      .status(400)
       .json("Unauthorized - User does not have access to document");
     return;
   }
@@ -272,7 +280,8 @@ router.get("/:id/users", async function (req, res, next) {
     users.push(user);
   }
 
-  res.json(users);
+  res.json(users).status(200);
+  return;
 });
 
 export default router;

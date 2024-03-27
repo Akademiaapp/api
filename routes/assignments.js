@@ -44,10 +44,12 @@ router.get("/", async function (req, res, next) {
     });
 
     console.log("total assignments: ", assignmentsWithStatus);
-    res.json(assignmentsWithStatus);
+    res.json(assignmentsWithStatus).status(200);
+    return;
   } catch (error) {
     console.error("Error retrieving assignments:", error);
     res.status(500).json({ error: "Internal Server Error" });
+    return;
   }
 });
 
@@ -130,6 +132,7 @@ router.post("/", function (req, res, next) {
   });
 
   res.status(201).json({ message: "Assignment created" });
+  return;
 });
 
 export default router;
