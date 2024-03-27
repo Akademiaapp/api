@@ -219,10 +219,19 @@ router.put("/:id/users", async function (req, res, next) {
   }
 
   prisma.file_permission
-    .create({
-      data: {
+    .upsert({
+      where: {
+        document_id_user_id: {
+          document_id: id,
+          user_id: user.id,
+        },
+      },
+      create: {
         document_id: id,
         user_id: user.id,
+        permission: "WRITE",
+      },
+      update: {
         permission: "WRITE",
       },
     })
