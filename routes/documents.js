@@ -4,6 +4,7 @@ var router = express.Router();
 import { prisma } from "../app.js";
 import * as Y from "yjs"
 import { yDocToProsemirrorJSON } from "y-prosemirror";
+import { getDocumentType } from "../utils.js";
 
 // Get all users documents
 router.get("/", async function (req, res, next) {
@@ -72,27 +73,17 @@ router.post("/", function (req, res, next) {
 
 // Get document - Read
 router.get("/:id", function (req, res, next) {
-  let { id } = req.params;
-  
-  // Get document type and id from name
-  const documentType = id.split(".")[0];
-  const documentId = id.split(".")[1];
-
-  // Set `document` based on document type
-  let document;
-  if (documentType === "document") {
-    document = prisma.document;
-  } else if (documentType === "assignment") {
-    document = prisma.assignment;
-  } else if (documentType === "assignmentAnswer") {
-    document = prisma.assignment_answer;
+  const { type, id } = getDocumentType(req.params.id);
+  if (!type) {
+    res.status(400).json("Invalid document type");
+    return;
   }
 
-  console.log(documentId);
-  document
+  console.log(id);
+  type
     .findFirst({
       where: {
-        id: documentId,
+        id: id,
       },
     })
     .then((data) => {
@@ -243,9 +234,26 @@ router.put("/:id/users", async function (req, res, next) {
 
 // Get users with access to document - Read
 router.get("/:id/users", async function (req, res, next) {
-  let { id } = req.params;
-  id = id.split(".")[1];
+  const { type, id } = getDocumentType(req.params.id);
+  if (!type) {
+    res.status(400).json("Invalid document type");
+    return;
+  }
+
   console.log("id", id)
+
+
+  if (type === "document") {
+    document = prisma.document;
+  } else if (type === "assignment") {
+    document = prisma.assignment;
+  } else if (type === "assignmentAnswer") {
+    document = prisma.assignment_answer;
+  } else {
+    res.status(400).json("Invalid document type");
+    return;
+  }
+
 
   // Check if the user has access to the document, is the owner or has been shared the document
   const document = await prisma.document.findFirst({

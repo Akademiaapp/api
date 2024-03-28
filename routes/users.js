@@ -10,4 +10,15 @@ router.get("/", function (req, res, next) {
   });
 });
 
+router.get("/self", function (req, res, next) {
+  prisma.user.findFirst({
+    where: {
+      id: req.user.sub,
+    },
+  }).then((data) => {
+    res.json(data).status(200);
+    return;
+  });
+});
+
 export default router;
