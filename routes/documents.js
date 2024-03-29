@@ -73,14 +73,14 @@ router.post("/", function (req, res, next) {
 
 // Get document - Read
 router.get("/:id", function (req, res, next) {
-  const { type, id } = getDocumentType(req.params.id);
-  if (!type) {
+  const { document, id } = getDocumentType(req.params.id);
+  if (!document) {
     res.status(400).json("Invalid document type");
     return;
   }
 
   console.log(id);
-  type
+  document
     .findFirst({
       where: {
         id: id,
@@ -234,43 +234,30 @@ router.put("/:id/users", async function (req, res, next) {
 
 // Get users with access to document - Read
 router.get("/:id/users", async function (req, res, next) {
-  const { type, id } = getDocumentType(req.params.id);
-  if (!type) {
+  const { document, id } = getDocumentType(req.params.id);
+  if (!document) {
     res.status(400).json("Invalid document type");
     return;
   }
 
   console.log("id", id)
 
-
-  if (type === "document") {
-    document = prisma.document;
-  } else if (type === "assignment") {
-    document = prisma.assignment;
-  } else if (type === "assignmentAnswer") {
-    document = prisma.assignment_answer;
-  } else {
-    res.status(400).json("Invalid document type");
-    return;
-  }
-
-
   // Check if the user has access to the document, is the owner or has been shared the document
-  const document = await prisma.document.findFirst({
+  const doc = await document.findFirst({
     where: { id: id },
     include: {
       permissions: true,
     },
   });
 
-  if (!document) {
+  if (!doc) {
     res.status(400).json("Document not found");
     return;
   }
 
-  console.log("document", document);
+  console.log("document", doc);
 
-  const permission = document.permissions.find((permission) => {
+  const permission = doc.permissions.find((permission) => {
     return permission.user_id == req.user.sub;
   });
 
@@ -287,7 +274,7 @@ router.get("/:id/users", async function (req, res, next) {
 
   // Get the actual users from permission
   const users = [];
-  for (const permission of document.permissions) {
+  for (const permission of doc.permissions) {
     const user = await prisma.user.findFirst({
       where: {
         id: permission.user_id,

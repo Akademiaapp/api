@@ -2,13 +2,14 @@ import { prisma } from "./app.js";
 
 export function getDocumentType(id) {
     const type = id.split(".")[0];
+    console.log("type", type, "id", id, id.split(".")[1]);
     id = id.split(".")[1];
     if (type === "document") {
-        return prisma.document, id;
+        return { document: prisma.document, id: id };
     } else if (type === "assignment") {
-        return prisma.assignment, id;
+        return { document: prisma.assignment, id: id };;
     } else if (type === "assignmentAnswer") {
-        return prisma.assignment_answer, id;
+        return { document: prisma.assignment_answer, id: id };;
     } else {
         return null, null;
     }
