@@ -242,6 +242,89 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
+router.delete("/:id", async function (req, res, next) {
+  const user_id = req.user.sub;
+  const assignment_id = req.params.id;
+
+  // Validate that the user is a teacher
+  const teacher = await prisma.user.findFirst({
+    where: {
+      id: user_id,
+    },
+  });
+
+  if (teacher.type !== "TEACHER" && teacher.type !== "TESTER") {
+    res.status(401).json({ message: "Unauthorized - User is not a teacher" });
+    return;
+  } else {
+    // Validate that the assignment exists
+    const assignment = await prisma.assignment.findFirst({
+      where: {
+        id: assignment_id,
+      },
+    });
+
+    if (assignment == null) {
+      res.status(404).json({ message: "Not found - Assignment not found" });
+      return;
+    }
+
+    // Validate that the assignment is owned by the teacher
+    if (assignment.teacher_id !== user_id) {
+      res.status(401).json({ message: "Unauthorized - Assignment not owned by user" });
+      return;
+    }
+
+    // Delete the assignment
+    const deleted_assignment = await prisma.assignment.delete({
+      where: {
+        id: assignment_id,
+      },
+    });
+
+    res.status(200).json(deleted_assignment);
+    return;
+  }
+});
+
+router.get("/:id", async function (req, res, next) {
+  const user_id = req.user.sub;
+  const assignment_id = req.params.id;
+
+  // Validate that the user is a teacher
+  const teacher = await prisma.user.findFirst({
+    where: {
+      id: user_id,
+    },
+  });
+
+  if (teacher.type !== "TEACHER" && teacher.type !== "TESTER") {
+    res.status(401).json({ message: "Unauthorized - User is not a teacher" });
+    return;
+  } else {
+    // Validate that the assignment exists
+    const assignment = await prisma.assignment.findFirst({
+      where: {
+        id: assignment_id,
+      },
+    });
+
+    if (assignment == null) {
+      res.status(404).json({ message: "Not found - Assignment not found" });
+      return;
+    }
+
+    // Validate that the assignment is owned by the teacher
+    if (assignment.teacher_id !== user_id) {
+      res.status(401).json({ message: "Unauthorized - Assignment not owned by user" });
+      return;
+    }
+
+    res.status(200).json(assignment);
+    return;
+  }
+});
+
 router.all("*", function (req, res, next) {
   res.status(404).json("Not found");
 });
