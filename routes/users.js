@@ -15,7 +15,8 @@ router.get("/self", function (req, res, next) {
 });
 
 router.put("/self", function (req, res, next) {
-  const { email, first_name, last_name, schoolId, avatar } = req.query;
+  const { email, first_name, last_name, schoolId, type } = req.query;
+
   prisma.user
     .update({
       where: {
@@ -27,6 +28,7 @@ router.put("/self", function (req, res, next) {
         last_name: last_name,
         schoolId: schoolId,
         updated_at: new Date(),
+        type: type,
       },
     })
     .then((data) => {
