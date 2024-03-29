@@ -2,9 +2,6 @@ import express from "express";
 var router = express.Router();
 
 import { prisma } from "../app.js";
-import * as Y from "yjs"
-import { yDocToProsemirrorJSON } from "y-prosemirror";
-import { getDocumentType } from "../utils.js";
 
 // Get all users documents
 router.get("/", async function (req, res, next) {
@@ -71,13 +68,9 @@ router.post("/", function (req, res, next) {
 
 // Get document - Read
 router.get("/:id", function (req, res, next) {
-  const { document, id } = getDocumentType(req.params.id);
-  if (!document) {
-    res.status(400).json("Invalid document type");
-    return;
-  }
+  let id = req.params.id.split(".")[1];
 
-  document
+  prisma.document
     .findFirst({
       where: {
         id: id,
@@ -209,14 +202,10 @@ router.put("/:id/users", async function (req, res, next) {
 
 // Get users with access to document - Read
 router.get("/:id/users", async function (req, res, next) {
-  const { document, id } = getDocumentType(req.params.id);
-  if (!document) {
-    res.status(400).json("Invalid document type");
-    return;
-  }
+  let id = req.params.id.split(".")[1];
 
   // Check if the user has access to the document, is the owner or has been shared the document
-  const doc = await document.findFirst({
+  const doc = await prisma.document.findFirst({
     where: { id: id },
     include: {
       permissions: true,
@@ -257,6 +246,58 @@ router.get("/:id/users", async function (req, res, next) {
   return;
 });
 
+// Remove user from document - Delete
+router.delete("/:id/users", async function (req, res, next) {
+  let { id } = req.params;
+  id = id.split(".")[1];
+  const { user_email } = req.query;
+
+  // Check if the user has access to the document
+  const document = await prisma.document.findFirst({
+    where: { id: id },
+    include: {
+      permissions: true,
+    },
+  });
+
+  if (!document) {
+    res.status(400).json("Document not found");
+    return;
+  }
+
+  const permission = document.permissions.find((permission) => {
+    return permission.user_id == req.user.sub;
+  });
+
+  if (!permission && permission.permission != "OWNER") {
+    res.status(400).json("Unauthorized - User does not have access to document");
+  }
+
+  // Get user_id from user_email
+  const user = await prisma.user.findFirst({
+    where: { email: user_email },
+  });
+  if (!user) {
+    res.status(400).json('User not found');
+    return;
+  }
+
+  prisma.file_permission
+    .delete({
+      where: {
+        document_id_user_id: {
+          document_id: id,
+          user_id: user.id,
+        },
+      },
+    })
+    .then((data) => {
+      res.json(data).status(200);
+      return;
+    });
+});
+
+// Catch all
 router.all("*", function (req, res, next) {
   res.status(404).json("Not found");
 });

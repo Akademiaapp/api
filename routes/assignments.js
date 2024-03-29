@@ -29,7 +29,6 @@ router.get("/", async function (req, res, next) {
   return;
 });
 
-
 // Create assignment - Create
 router.post("/", async function (req, res, next) {
   const user_id = req.user.sub;
@@ -77,6 +76,7 @@ router.post("/", async function (req, res, next) {
   }
 });
 
+// Deploy assignment - Update
 router.post("/:id/deploy", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
@@ -162,6 +162,7 @@ router.post("/:id/deploy", async function (req, res, next) {
   }
 });
 
+// Update assignment - Update
 router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
@@ -214,6 +215,7 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
+// Get assignment by id
 router.delete("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
@@ -259,6 +261,7 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
+// Get assignment by id
 router.get("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
@@ -297,6 +300,7 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+// Catch all
 router.all("*", function (req, res, next) {
   res.status(404).json("Not found");
 });
