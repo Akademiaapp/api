@@ -166,7 +166,7 @@ router.post("/:id/deploy", async function (req, res, next) {
 router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
-  let { asigned_groups_ids, name } = req.query;
+  let { asigned_groups_ids, name, due_date } = req.query;
 
   if (asigned_groups_ids) {
     asigned_groups_ids = JSON.parse(asigned_groups_ids);
@@ -209,7 +209,8 @@ router.put("/:id", async function (req, res, next) {
       data: {
         updated_at: new Date(),
         asigned_groups_ids: asigned_groups_ids,
-        name: name
+        name: name,
+        due_date: due_date,
       },
     });
 
