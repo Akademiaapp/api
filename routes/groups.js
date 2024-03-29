@@ -49,6 +49,46 @@ router.put("/:id", function (req, res, next) {
         });
 });
 
+router.delete("/:id", function (req, res, next) {
+    const id = req.params.id;
+    prisma.group
+        .delete({
+            where: {
+                id: id,
+            },
+        })
+        .then((data) => {
+            res.json(data).status(200);
+            return;
+        });
+});
+
+router.get("/:id/users", function (req, res, next) {
+    const id = req.params.id;
+    prisma.user_group
+        .findMany({
+            where: {
+                groupId: id,
+            },
+        })
+        .then((data) => {
+            res.json(data).status(200);
+        });
+});
+
+router.get("/:id", function (req, res, next) {
+    const id = req.params.id;
+    prisma.group
+        .findUnique({
+            where: {
+                id: id,
+            },
+        })
+        .then((data) => {
+            res.json(data).status(200);
+        });
+});
+
 router.all("*", function (req, res, next) {
     res.status(404).json("Not found");
 });
