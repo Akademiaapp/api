@@ -167,7 +167,7 @@ router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
   let { asigned_groups_ids, name } = req.query;
-  
+
   if (asigned_groups_ids) {
     asigned_groups_ids = JSON.parse(asigned_groups_ids);
   }
@@ -302,6 +302,52 @@ router.get("/:id", async function (req, res, next) {
     return;
   }
 });
+
+// Get submitted assignment answers
+router.get("/:id/submitted", async function (req, res, next) {
+  const user_id = req.user.sub;
+  const assignment_id = req.params.id;
+
+  // Validate that the user is a teacher
+  const teacher = await prisma.user.findFirst({
+    where: {
+      id: user_id,
+    },
+  });
+
+  if (teacher.type !== "TEACHER" && teacher.type !== "TESTER") {
+    res.status(401).json({ message: "Unauthorized - User is not a teacher" });
+    return;
+  } else {
+    // Validate that the assignment exists
+    const assignment = await prisma.assignment.findFirst({
+      where: {
+        id: assignment_id,
+      },
+    });
+
+    if (assignment == null) {
+      res.status(404).json({ message: "Not found - Assignment not found" });
+      return;
+    }
+
+    // Validate that the assignment is owned by the teacher
+    if (assignment.teacher_id !== user_id) {
+      res.status(401).json({ message: "Unauthorized - Assignment not owned by user" });
+      return;
+    }
+
+    const assignment_answers = await prisma.assignment_answer.findMany({
+      where: {
+        assignment_id: assignment_id,
+        status: "SUBMITTED",
+      },
+    });
+
+    res.status(200).json(assignment_answers);
+    return;
+  }
+}); 
 
 // Catch all
 router.all("*", function (req, res, next) {
