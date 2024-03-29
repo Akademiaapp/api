@@ -85,7 +85,11 @@ router.get("/:id", async function (req, res, next) {
         return;
         }
 
-        res.json({ ...assignment, status: assignmentAnswer.status, answer_id: assignmentAnswer.id }).status(200);
+        assignment.assignment_id = assignment.id;
+        assignment.id = assignmentAnswer.id;
+        assignment.status = assignmentAnswer.status;
+
+        res.json(assignment).status(200);
         return;
     } catch (error) {
         console.error("Error retrieving assignment:", error);
