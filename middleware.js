@@ -64,9 +64,6 @@ const verifyUserExists = async (req, res, next) => {
   // Attach the user record to the request for further processing
   req.userRecord = userRecord;
 
-  // Log the user record
-  console.log("User record:", userRecord);
-
   // Move to the next middleware or route handler
   next();
 };
@@ -93,8 +90,6 @@ const verifyUserSettings = async (req, res, next) => {
       id: user.schoolId
     }
   });
-
-  console.log("School:", school);
 
   // Move to the next middleware or route handler
   next();

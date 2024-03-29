@@ -40,8 +40,8 @@ router.post('/self/groups', function (req, res, next) {
   const { groupId } = req.query;
   prisma.user_group.create({
     data: {
-      user_id: req.userRecord.id,
-      group_id: groupId,
+      userId: req.userRecord.id,
+      groupId: groupId,
     },
   }).then((data) => {
     res.json(data).status(200);

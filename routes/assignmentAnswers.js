@@ -14,8 +14,6 @@ router.get("/", async function (req, res, next) {
         },
         });
 
-        console.log("assignmentAnswers: ", assignmentAnswers)
-
         const assignmentPromises = assignmentAnswers.map(async (assignment_status) => {
         try {
             const assignment = await prisma.assignment.findFirst({
@@ -46,7 +44,6 @@ router.get("/", async function (req, res, next) {
         return { ...assignment, status: answer.status, answer_id: answer.id };
         });
 
-        console.log("total assignments: ", assignmentsWithStatus);
         res.json(assignmentsWithStatus).status(200);
         return;
     } catch (error) {

@@ -37,8 +37,6 @@ router.get("/", async function (req, res, next) {
     );
   });
 
-  console.log("total documents: ", documents);
-
   res.json(documents);
 });
 
@@ -79,7 +77,6 @@ router.get("/:id", function (req, res, next) {
     return;
   }
 
-  console.log(id);
   document
     .findFirst({
       where: {
@@ -92,27 +89,6 @@ router.get("/:id", function (req, res, next) {
     }).catch((error) => {
       console.error(error);
       res.status(400).json('Document not found')
-      return;
-    });
-});
-
-// Get document json - Read
-router.get("/:id/json", function (req, res, next) {
-  let { id } = req.params;
-  id = id.split(".")[1];
-  prisma.document
-    .findFirst({
-      where: {
-        id: id,
-      },
-    })
-    .then((data) => {
-      console.log(data);
-      const ydoc = new Y.Doc()
-      ydoc.applyUpdate(data.data)
-      let json = yDocToProsemirrorJSON(yjsdoc);
-      console.log(json);
-      res.json(json).status(200);
       return;
     });
 });
@@ -203,7 +179,6 @@ router.put("/:id/users", async function (req, res, next) {
   const user = await prisma.user.findFirst({
     where: { email: user_email },
   });
-  console.log("user!: ", user);
   if (!user) {
     res.status(400).json('User not found');
     return;
@@ -240,8 +215,6 @@ router.get("/:id/users", async function (req, res, next) {
     return;
   }
 
-  console.log("id", id)
-
   // Check if the user has access to the document, is the owner or has been shared the document
   const doc = await document.findFirst({
     where: { id: id },
@@ -255,13 +228,9 @@ router.get("/:id/users", async function (req, res, next) {
     return;
   }
 
-  console.log("document", doc);
-
   const permission = doc.permissions.find((permission) => {
     return permission.user_id == req.user.sub;
   });
-
-  console.log("permission!: ", permission)
 
   if (
     !permission

@@ -5,7 +5,6 @@ import { prisma } from "../app.js";
 
 /* GET users groups. */
 router.get("/", async function (req, res, next) {
-    console.log("Getting groups for user: ", req.userRecord);
     let groups = await prisma.group.findMany({
         where: {
             id: {
