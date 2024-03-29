@@ -66,7 +66,7 @@ router.post("/", async function (req, res, next) {
         name: name,
         isPublic: false,
         teacher_id: user_id,
-        due_date: Date.parse(due_date),
+        due_date: new Date(due_date),
         updated_at: new Date(),
         created_at: new Date(),
       },
@@ -127,10 +127,10 @@ router.post("/:id/deploy", async function (req, res, next) {
     });
 
     // Create assignment answers for all students in assigned groups
-    const assigned_groups = assignment.asigned_groups_ids;
+    const assigned_groups = deployed_assignment.asigned_groups_ids;
     const students = await prisma.user_group.findMany({
       where: {
-        group_id: {
+        groupId: {
           in: assigned_groups,
         },
       },
@@ -144,10 +144,8 @@ router.post("/:id/deploy", async function (req, res, next) {
         const assignment_answer = await prisma.assignment_answer.create({
           data: {
             assignment_id: assignment_id,
-            student_id: student.user_id,
+            student_id: student.userId,
             status: "NOT_STARTED",
-            updated_at: new Date(),
-            created_at: new Date(),
           },
         });
         return assignment_answer;
@@ -167,7 +165,8 @@ router.post("/:id/deploy", async function (req, res, next) {
 router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
-  const { asigned_groups_ids, name } = req.query;
+  let { asigned_groups_ids, name } = req.query;
+  asigned_groups_ids = JSON.parse(asigned_groups_ids);
 
   // Validate that the user is a teacher
   const teacher = await prisma.user.findFirst({
