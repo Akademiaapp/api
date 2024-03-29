@@ -1,0 +1,16 @@
+meta {
+  name: Update assignment
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/assignments/1ec00ad6-aec4-4491-aefd-cbb9016b7e68?asigned_groups_ids=[f81cc742-4bc1-42a2-b388-40571723bc31, 0edb8e8e-61db-4e18-8618-b016018e806e]&name=Matematik FP9 marts 2021
+  body: none
+  auth: none
+}
+
+query {
+  asigned_groups_ids: [f81cc742-4bc1-42a2-b388-40571723bc31, 0edb8e8e-61db-4e18-8618-b016018e806e]
+  name: Matematik FP9 marts 2021
+}

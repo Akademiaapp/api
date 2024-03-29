@@ -1,0 +1,19 @@
+meta {
+  name: Update self
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/users/self?email=jonathan@bangert.dk&first_name=Jonathan&last_name=Bangert&schoolId=b6067295-0e42-43b7-8551-101377f4fe28&type=TESTER
+  body: none
+  auth: none
+}
+
+query {
+  email: jonathan@bangert.dk
+  first_name: Jonathan
+  last_name: Bangert
+  schoolId: b6067295-0e42-43b7-8551-101377f4fe28
+  type: TESTER
+}

@@ -1,0 +1,16 @@
+meta {
+  name: Create document
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/documents?name=Document name&user_id=3cae73e4-f8d1-49b1-a0ee-e74d0d41ecb8
+  body: none
+  auth: none
+}
+
+query {
+  name: Document name
+  user_id: 3cae73e4-f8d1-49b1-a0ee-e74d0d41ecb8
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Add self to group
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/users/self/groups?groupId=a889e3ac-f105-4085-bc61-c5868b63150e
+  body: none
+  auth: none
+}
+
+query {
+  groupId: a889e3ac-f105-4085-bc61-c5868b63150e
+}
