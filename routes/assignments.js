@@ -167,7 +167,10 @@ router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
   let { asigned_groups_ids, name } = req.query;
-  asigned_groups_ids = JSON.parse(asigned_groups_ids);
+  
+  if (asigned_groups_ids) {
+    asigned_groups_ids = JSON.parse(asigned_groups_ids);
+  }
 
   // Validate that the user is a teacher
   const teacher = await prisma.user.findFirst({
