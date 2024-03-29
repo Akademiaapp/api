@@ -24,7 +24,7 @@ router.get("/:id/users", function (req, res, next) {
     const id = req.params.id;
     prisma.user.findMany({
         where: {
-            school_id: id,
+            schoolId: id,
         },
     }).then((data) => {
         res.json(data).status(200);
