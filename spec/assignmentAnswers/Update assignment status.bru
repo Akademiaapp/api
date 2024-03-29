@@ -1,0 +1,15 @@
+meta {
+  name: Update assignment status
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/assignmentAnswers/1757896c-3856-462b-b56a-a0a2eb8bb3ec?status=SUBMITTED
+  body: none
+  auth: none
+}
+
+query {
+  status: SUBMITTED
+}
