@@ -76,7 +76,7 @@ router.get("/:id", async function (req, res, next) {
 
         const assignment = await prisma.assignment.findFirst({
             where: {
-                id: assignment_id,
+                id: assignmentAnswer.assignment_id,
             },
         });
 
