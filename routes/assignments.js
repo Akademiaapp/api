@@ -143,7 +143,7 @@ router.post("/:id/deploy", async function (req, res, next) {
       return;
     }
 
-    // Deploy the assignment
+    // Make the assignment public
     const deployed_assignment = await prisma.assignment.update({
       where: {
         id: assignment_id,
@@ -153,21 +153,48 @@ router.post("/:id/deploy", async function (req, res, next) {
       },
     });
 
-    res.status(200).json(deployed_assignment);
+    // Create assignment answers for all students in assigned groups
+    const assigned_groups = assignment.asigned_groups_ids;
+    const students = await prisma.user_group.findMany({
+      where: {
+        group_id: {
+          in: assigned_groups,
+        },
+      },
+    });
+
+    // Filter out duplicates
+    const unique_students = students.filter((v, i, a) => a.findIndex(t => (t.user_id === v.user_id)) === i);
+
+    const assignment_answers_promises = unique_students.map(async (student) => {
+      try {
+        const assignment_answer = await prisma.assignment_answer.create({
+          data: {
+            assignment_id: assignment_id,
+            student_id: student.user_id,
+            status: "NOT_STARTED",
+            updated_at: new Date(),
+            created_at: new Date(),
+          },
+        });
+        return assignment_answer;
+      } catch (error) {
+        console.error("Error creating assignment answer: ", error);
+        return null;
+      }
+    });
+
+    const assignment_answers = await Promise.all(assignment_answers_promises);
+
+    res.status(200).json(assignment_answers);
     return;
   }
 });
 
-router.post("/:id/groups", async function (req, res, next) {
+router.put("/:id", async function (req, res, next) {
   const user_id = req.user.sub;
   const assignment_id = req.params.id;
-  const { group_id } = req.query;
-
-  // Validate that group_id is provided
-  if (group_id == null) {
-    res.status(400).json({ message: "Bad request - Missing group_id" });
-    return;
-  }
+  const { asigned_groups_ids, name } = req.query;
 
   // Validate that the user is a teacher
   const teacher = await prisma.user.findFirst({
@@ -198,40 +225,19 @@ router.post("/:id/groups", async function (req, res, next) {
       return;
     }
 
-    // Validate that the group exists
-    const group = await prisma.group.findFirst({
+    // Update the assignment
+    const updated_assignment = await prisma.assignment.update({
       where: {
-        id: group_id,
+        id: assignment_id,
+      },
+      data: {
+        updated_at: new Date(),
+        asigned_groups_ids: asigned_groups_ids,
+        name: name
       },
     });
 
-    if (group == null) {
-      res.status(404).json({ message: "Not found - Group not found" });
-      return;
-    }
-
-    // Get all students in the group
-    const students = await prisma.user_group.findMany({
-      where: {
-        groupId: group_id,
-      },
-    });
-
-    // Create an assignment_answer for each student
-    const assignment_answer_promises = students.map(async (student) => {
-      const assignment_answer = await prisma.assignment_answer.create({
-        data: {
-          assignment_id: assignment_id,
-          student_id: student.userId,
-          status: "NOT_STARTED"
-        },
-      });
-      return assignment_answer;
-    });
-
-    const assignment_answers = await Promise.all(assignment_answer_promises);
-
-    res.status(201).json(assignment_answers);
+    res.status(200).json(updated_assignment);
     return;
   }
 });

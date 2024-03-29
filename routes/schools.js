@@ -43,11 +43,11 @@ router.get("/:id/groups", function (req, res, next) {
 });
 
 router.post("/", function (req, res, next) {
-    const { name } = req.query;
+    const { name, address } = req.query;
     prisma.school.create({
         data: {
             name: name,
-            address: "",
+            address: address,
         },
     }).then((data) => {
         res.json(data).status(200);
