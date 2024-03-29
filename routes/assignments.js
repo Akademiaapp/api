@@ -58,82 +58,47 @@ router.get("/", async function (req, res, next) {
 router.post("/", async function (req, res, next) {
   const user_id = req.user.sub;
 
-  try {
-    // Validate that the user is a teacher
-    const teacher = await prisma.user.findFirst({
-      where: {
-        id: user_id,
+  // Validate that the user is a teacher
+  const teacher = await prisma.user.findFirst({
+    where: {
+      id: user_id,
+    },
+  });
+
+  if (teacher.type !== "TEACHER") {
+    res.status(401).json({ message: "Unauthorized - User is not a teacher" });
+    return;
+  } else {
+    const { name, due_date } = req.query;
+
+    // Validate that name and document are provided
+    if (name == null || due_date == null) {
+      res
+        .status(400)
+        .json({ message: "Bad request - Missing name or due_date" });
+      return;
+    }
+
+    // Validate that the due_date is a valid iso date
+    if (!BigInt(new Date(due_date).valueOf())) {
+      res.status(400).json({ message: "Bad request - Invalid due_date" });
+      return;
+    }
+
+    const assignment_data = await prisma.assignment.create({
+      data: {
+        name: name,
+        isPublic: false,
+        teacher_id: user_id,
+        due_date: Date.parse(due_date),
+        updated_at: new Date(),
+        created_at: new Date(),
       },
     });
 
-    if (teacher == null) {
-      res.status(401).json({ message: "Unauthorized - User is not a teacher" });
-      return;
-    } else {
-      const { name, document_id, due_date, assignedGroupIds } = req.query;
-
-      // Validate that name and document are provided
-      if (name == null || document_id == null || due_date == null || assignedGroupIds == null) {
-        res
-          .status(400)
-          .json({ message: "Bad request - Missing name, document_id, assignedGroupIds or due_date" });
-        return;
-      }
-
-      // Validate that the due_date is a valid iso date
-      if (!BigInt(new Date(due_date).valueOf())) {
-        res.status(400).json({ message: "Bad request - Invalid due_date" });
-        return;
-      }
-
-      // Validate that the document exists
-      const document = await prisma.document.findFirst({
-        where: {
-          id: document_id,
-        },
-      });
-
-      if (document == null) {
-        res.status(404).json({ message: "Document not found" });
-        return;
-      }
-
-      const assignment_data = await prisma.assignment.create({
-        data: {
-          name: name,
-          assignment_document_id: document_id,
-          teacher_id: user_id,
-          due_date: BigInt(Date.parse(due_date).valueOf()),
-        },
-      });
-
-      // Create assignment answers for all students
-      const students = await prisma.user.findMany({
-        where: {
-          type: {
-            in: ["STUDENT", "TESTER"],
-          },
-        },
-      });
-
-      for (const student of students) {
-        await prisma.file_permission.create({
-          data: {
-            document_id: assignment_data.id,
-            user_id: student.id,
-            status: "NOT_STARTED",
-          },
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error creating assignment:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(201).json(assignment_data);
     return;
   }
-
-  res.status(201).json({ message: "Assignment created" });
-  return;
 });
 
 router.all("*", function (req, res, next) {
