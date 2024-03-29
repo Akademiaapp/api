@@ -68,7 +68,7 @@ router.post("/", function (req, res, next) {
 
 // Get document - Read
 router.get("/:id", function (req, res, next) {
-  let id = req.params.id.split(".")[1];
+  let id = req.params.id;
 
   prisma.document
     .findFirst({
@@ -89,7 +89,6 @@ router.get("/:id", function (req, res, next) {
 // Rename document - Update
 router.put("/:id", function (req, res, next) {
   let { id } = req.params;
-  id = id.split(".")[1];
   const { name } = req.query;
   prisma.document
     .update({
@@ -109,7 +108,6 @@ router.put("/:id", function (req, res, next) {
 // Delete document - Delete
 router.delete("/:id", async function (req, res, next) {
   let { id } = req.params;
-  id = id.split(".")[1];
 
   // Check if the user has access to the document
   const document = await prisma.document.findFirst({
@@ -144,7 +142,6 @@ router.delete("/:id", async function (req, res, next) {
 // Create a new document_permissions for a user to the document
 router.put("/:id/users", async function (req, res, next) {
   let { id } = req.params;
-  id = id.split(".")[1];
   const { user_email } = req.query;
 
   // Check if the user has access to the document
@@ -202,7 +199,7 @@ router.put("/:id/users", async function (req, res, next) {
 
 // Get users with access to document - Read
 router.get("/:id/users", async function (req, res, next) {
-  let id = req.params.id.split(".")[1];
+  let id = req.params.id;
 
   // Check if the user has access to the document, is the owner or has been shared the document
   const doc = await prisma.document.findFirst({
@@ -249,7 +246,6 @@ router.get("/:id/users", async function (req, res, next) {
 // Remove user from document - Delete
 router.delete("/:id/users", async function (req, res, next) {
   let { id } = req.params;
-  id = id.split(".")[1];
   const { user_email } = req.query;
 
   // Check if the user has access to the document
