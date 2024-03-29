@@ -1,8 +1,8 @@
-import { prisma } from "./app";
+import { prisma } from "./app.js";
 
 export function getDocumentType(id) {
     const type = id.split(".")[0];
-    const id = id.split(".")[1];
+    id = id.split(".")[1];
     if (type === "document") {
         return prisma.document, id;
     } else if (type === "assignment") {

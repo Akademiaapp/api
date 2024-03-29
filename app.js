@@ -11,6 +11,8 @@ import middleware from "./middleware.js";
 import usersRouter from "./routes/users.js";
 import documentsRouter from "./routes/documents.js";
 import assignmentsRouter from "./routes/assignments.js";
+import schoolsRouter from "./routes/schools.js";
+import groupsRouter from "./routes/groups.js";
 
 import { fileURLToPath } from "url";
 
@@ -62,6 +64,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/users", usersRouter);
 app.use("/documents", documentsRouter);
 app.use("/assignments", assignmentsRouter);
+app.use("/schools", schoolsRouter);
+app.use("/groups", groupsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

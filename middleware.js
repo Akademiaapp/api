@@ -51,6 +51,13 @@ const verifyUserExists = async (req, res, next) => {
       email: user.email,
       created_at: new Date(),
       updated_at: new Date(),
+    },
+    include: {
+      school: true,
+      user_group: true,
+      assignment: true,
+      assignment_answer: true,
+      file_permission: true, 
     }
   });
 

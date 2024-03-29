@@ -11,14 +11,11 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/self", function (req, res, next) {
-  prisma.user.findFirst({
-    where: {
-      id: req.user.sub,
-    },
-  }).then((data) => {
-    res.json(data).status(200);
-    return;
-  });
+  res.status(200).json(req.userRecord);
+});
+
+router.all("*", function (req, res, next) {
+  res.status(404).json("Not found");
 });
 
 export default router;

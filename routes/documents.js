@@ -301,4 +301,8 @@ router.get("/:id/users", async function (req, res, next) {
   return;
 });
 
+router.all("*", function (req, res, next) {
+  res.status(404).json("Not found");
+});
+
 export default router;
