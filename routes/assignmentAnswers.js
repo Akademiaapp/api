@@ -59,6 +59,8 @@ router.get("/:id", async function (req, res, next) {
     const assignment_id = req.params.id;
 
     try {
+        console.log("user_id", user_id);
+        console.log("assignment_id", assignment_id);
         const assignmentAnswer = await prisma.assignment_answer.findFirst({
             where: {
                 student_id: user_id,
@@ -66,15 +68,17 @@ router.get("/:id", async function (req, res, next) {
             },
         });
 
-        if (!assignmentAnswer) {
-        res.status(404).json({ error: "Assignment not found" });
-        return;
+        console.log("assignmentAnswer", assignmentAnswer);
+
+        if (!assignmentAnswer.id) {
+            res.status(404).json({ error: "Assignment not found" });
+            return;
         }
 
         const assignment = await prisma.assignment.findFirst({
-        where: {
-            id: assignment_id,
-        },
+            where: {
+                id: assignment_id,
+            },
         });
 
         if (!assignment) {
