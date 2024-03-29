@@ -63,7 +63,6 @@ router.get("/:id", async function (req, res, next) {
         console.log("assignment_id", assignment_id);
         const assignmentAnswer = await prisma.assignment_answer.findFirst({
             where: {
-                student_id: user_id,
                 id: assignment_id,
             },
         });
