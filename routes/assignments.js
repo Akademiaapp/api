@@ -169,7 +169,7 @@ router.put("/:id", async function (req, res, next) {
   let { asigned_groups_ids, name, due_date } = req.query;
 
   if (asigned_groups_ids) {
-    asigned_groups_ids = JSON.parse(asigned_groups_ids);
+    asigned_groups_ids = asigned_groups_ids.split(",");
   }
 
   // Validate that the user is a teacher
