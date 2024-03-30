@@ -169,7 +169,16 @@ router.put("/:id", async function (req, res, next) {
   let { asigned_groups_ids, name, due_date } = req.query;
 
   if (asigned_groups_ids) {
-    asigned_groups_ids = asigned_groups_ids.split(",");
+    try {
+      asigned_groups_ids = asigned_groups_ids.split(",");
+      if (asigned_groups_ids.length === 0) {
+        res.status(400).json({ message: "Bad request - Invalid asigned_groups_ids" });
+        return;
+      }
+    } catch (error) {
+      res.status(400).json({ message: "Bad request - Invalid asigned_groups_ids" });
+      return;
+    }
   }
 
   // Validate that the user is a teacher
