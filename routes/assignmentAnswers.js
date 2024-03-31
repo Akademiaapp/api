@@ -15,17 +15,17 @@ router.get("/", async function (req, res, next) {
         });
 
         const assignmentPromises = assignmentAnswers.map(async (assignment_status) => {
-        try {
-            const assignment = await prisma.assignment.findFirst({
-            where: {
-                id: assignment_status.assignment_id,
+            try {
+                const assignment = await prisma.assignment.findFirst({
+                where: {
+                    id: assignment_status.assignment_id,
+                }
+                });
+                return assignment;
+            } catch (error) {
+                console.log("Couldn't get assignment. Something's fishy....");
+                return null;
             }
-            });
-            return assignment;
-        } catch (error) {
-            console.log("Couldn't get assignment. Something's fishy....");
-            return null;
-        }
         });
 
         const assignments = await Promise.all(assignmentPromises);
@@ -40,8 +40,11 @@ router.get("/", async function (req, res, next) {
 
         // Add status to each assignment
         const assignmentsWithStatus = publicAssignments.map((assignment) => {
-        const answer = assignmentAnswers.find((answer) => answer.assignment_id === assignment.id);
-        return { ...assignment, status: answer.status, answer_id: answer.id };
+            const answer = assignmentAnswers.find((answer) => answer.assignment_id === assignment.id);
+            assignment.assignment_id = assignment.id;
+            assignment.id = answer.id;
+            assignment.status = answer.status;
+            return assignment;
         });
 
         res.json(assignmentsWithStatus).status(200);
