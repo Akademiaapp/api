@@ -110,8 +110,7 @@ router.put("/:id", async function (req, res, next) {
     try {
         const assignmentAnswer = await prisma.assignment_answer.findFirst({
             where: {
-                student_id: user_id,
-                assignment_id: assignment_id,
+                id: assignment_id,
             },
         });
 
