@@ -40,6 +40,7 @@ router.get("/", async function (req, res, next) {
 // Create document - Create
 router.post("/", function (req, res, next) {
 	const { name, user_id, isNote } = req.query;
+	isNote = isNote === "true";
 	prisma.document
 		.create({
 			data: {
