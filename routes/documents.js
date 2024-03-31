@@ -38,34 +38,31 @@ router.get("/", async function (req, res, next) {
 });
 
 // Create document - Create
-router.post("/", function (req, res, next) {
+router.post("/", async function (req, res, next) {
 	const { name, user_id, isNote } = req.query;
-	isNote = isNote === "true";
-	prisma.document
-		.create({
+	const isNoteValue = isNote === "true";
+	try {
+		const data = await prisma.document.create({
 			data: {
 				name: name,
 				data: Buffer.from(""),
-				isNote: isNote || false,
+				isNote: isNoteValue || false,
 				created_at: new Date(),
 				updated_at: new Date(),
 			},
-		})
-		.then((data) => {
-			// Add the user to the document
-			prisma.file_permission
-				.create({
-					data: {
-						document_id: data.id,
-						user_id: user_id,
-						permission: "OWNER",
-					},
-				})
-				.then(() => {
-					res.json(data).status(200);
-					return;
-				});
 		});
+		await prisma.file_permission.create({
+			data: {
+				document_id: data.id,
+				user_id: user_id,
+				permission: "OWNER",
+			},
+		});
+		res.json(data).status(200);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json("Internal Server Error");
+	}
 });
 
 // Get document - Read
