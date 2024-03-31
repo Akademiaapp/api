@@ -286,31 +286,20 @@ router.get("/:id", async function (req, res, next) {
     },
   });
 
-  if (teacher.type !== "TEACHER" && teacher.type !== "TESTER") {
-    res.status(401).json({ message: "Unauthorized - User is not a teacher" });
-    return;
-  } else {
-    // Validate that the assignment exists
-    const assignment = await prisma.assignment.findFirst({
-      where: {
-        id: assignment_id,
-      },
-    });
+  // Validate that the assignment exists
+  const assignment = await prisma.assignment.findFirst({
+    where: {
+      id: assignment_id,
+    },
+  });
 
-    if (assignment == null) {
-      res.status(404).json({ message: "Not found - Assignment not found" });
-      return;
-    }
-
-    // Validate that the assignment is owned by the teacher
-    if (assignment.teacher_id !== user_id) {
-      res.status(401).json({ message: "Unauthorized - Assignment not owned by user" });
-      return;
-    }
-
-    res.status(200).json(assignment);
+  if (assignment == null) {
+    res.status(404).json({ message: "Not found - Assignment not found" });
     return;
   }
+
+  res.status(200).json(assignment);
+  return;
 });
 
 // Get submitted assignment answers
