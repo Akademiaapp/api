@@ -9,7 +9,7 @@ let exceptionEnds = ['groups']
 // Middleware to verify JWT
 const verifyToken = async (req, res, next) => {
   // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.endsWith(end))) {
+  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
     next();
     return;
   }
@@ -44,7 +44,7 @@ const verifyToken = async (req, res, next) => {
 
 const verifyUserExists = async (req, res, next) => {
   // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.endsWith(end))) {
+  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
     next();
     return;
   }
@@ -97,7 +97,7 @@ const verifyUserExists = async (req, res, next) => {
 
 const verifyUserSettings = async (req, res, next) => {
   // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.endsWith(end))) {
+  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
     next();
     return;
   }
