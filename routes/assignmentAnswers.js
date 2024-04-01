@@ -44,6 +44,8 @@ router.get("/", async function (req, res, next) {
             assignment.assignment_id = assignment.id;
             assignment.id = answer.id;
             assignment.status = answer.status;
+            assignment.grade = answer.grade;
+            assignment.feedback = answer.feedback;
             return assignment;
         });
 
@@ -91,6 +93,8 @@ router.get("/:id", async function (req, res, next) {
         assignment.assignment_id = assignment.id;
         assignment.id = assignmentAnswer.id;
         assignment.status = assignmentAnswer.status;
+        assignment.grade = assignmentAnswer.grade;
+        assignment.feedback = assignmentAnswer.feedback;
 
         res.json(assignment).status(200);
         return;
