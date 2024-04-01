@@ -105,7 +105,7 @@ router.get("/:id", async function (req, res, next) {
 router.put("/:id", async function (req, res, next) {
     const user_id = req.user.sub;
     const assignment_id = req.params.id;
-    const { status } = req.query;
+    const { status, grade, feedback } = req.query;
 
     try {
         const assignmentAnswer = await prisma.assignment_answer.findFirst({
@@ -125,6 +125,8 @@ router.put("/:id", async function (req, res, next) {
             },
             data: {
                 status: status,
+                grade: grade,
+                feedback: feedback,
             },
         });
 
