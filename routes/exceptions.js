@@ -27,7 +27,9 @@ router.get("/schools/:id/groups", function (req, res, next) {
             school_id: id,
         },
     }).then((data) => {
-        res.json(data).status(200);
+        // Clear dublicates
+        const unique = [...new Set(data.map(item => item.id))];
+        res.json(unique).status(200);
     });
 });
 
