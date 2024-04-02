@@ -52,6 +52,7 @@ BigInt.prototype.toJSON = function () {
 var app = express();
 
 app.use(cors()); // Enable CORS
+app.use('/public', exceptionsRouter);
 
 app.use(middleware.verifyToken); // Apply the middleware to all routes
 app.use(middleware.verifyUserExists);
@@ -63,7 +64,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/public', exceptionsRouter);
 app.use("/users", usersRouter);
 app.use("/documents", documentsRouter);
 app.use("/assignments", assignmentsRouter);
