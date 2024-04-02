@@ -3,17 +3,8 @@ var router = express.Router();
 import axios from "axios";
 import { logger, prisma } from "./app.js";
 
-let exceptions = ['/schools', '/groups']
-let exceptionEnds = ['groups']
-
 // Middleware to verify JWT
-const verifyToken = async (req, res, next) => {
-  // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
-    next();
-    return;
-  }
-  
+const verifyToken = async (req, res, next) => {  
   // Get the bearer token
   const authorization = req.headers["authorization"];
 
@@ -43,12 +34,6 @@ const verifyToken = async (req, res, next) => {
 };
 
 const verifyUserExists = async (req, res, next) => {
-  // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
-    next();
-    return;
-  }
-    
   // Get the user information from the request
   const user = req.user;
 
@@ -96,12 +81,6 @@ const verifyUserExists = async (req, res, next) => {
  */
 
 const verifyUserSettings = async (req, res, next) => {
-  // Ignore exceptions
-  if (exceptions.includes(req.path) || exceptionEnds.some(end => req.path.contains(end))) {
-    next();
-    return;
-  }
-
   /** @type {User} */
   const user = req.user;
 

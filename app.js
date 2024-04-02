@@ -14,6 +14,7 @@ import assignmentsRouter from "./routes/assignments.js";
 import assignmentAnswersRouter from "./routes/assignmentAnswers.js";
 import schoolsRouter from "./routes/schools.js";
 import groupsRouter from "./routes/groups.js";
+import exceptionsRouter from "./routes/exceptions.js";
 
 import { fileURLToPath } from "url";
 
@@ -62,6 +63,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use('/public', exceptionsRouter);
 app.use("/users", usersRouter);
 app.use("/documents", documentsRouter);
 app.use("/assignments", assignmentsRouter);
