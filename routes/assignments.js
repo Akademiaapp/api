@@ -171,7 +171,7 @@ router.put("/:id", async function (req, res, next) {
   if (asigned_groups_ids) {
     try {
       asigned_groups_ids = asigned_groups_ids.split(",");
-      if (asigned_groups_ids.length === 0) {
+      if (asigned_groups_ids.length === 0 || asigned_groups_ids === "") {
         res.status(400).json({ message: "Bad request - Invalid asigned_groups_ids" });
         return;
       }
