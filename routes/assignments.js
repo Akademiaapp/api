@@ -339,7 +339,9 @@ router.get("/:id/submitted", async function (req, res, next) {
     const assignment_answers = await prisma.assignment_answer.findMany({
       where: {
         assignment_id: assignment_id,
-        status: "SUBMITTED",
+        status: {
+          in: ["SUBMITTED", "GRADED"],
+        },
       },
     });
 
