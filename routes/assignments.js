@@ -345,7 +345,23 @@ router.get("/:id/submitted", async function (req, res, next) {
       },
     });
 
-    res.status(200).json(assignment_answers);
+    // Attach student data
+    const assignment_answers_with_students = await Promise.all(
+      assignment_answers.map(async (assignment_answer) => {
+        const student = await prisma.user.findFirst({
+          where: {
+            id: assignment_answer.student_id,
+          },
+        });
+
+        return {
+          ...assignment_answer,
+          student,
+        };
+      })
+    );
+
+    res.status(200).json(assignment_answers_with_students);
     return;
   }
 }); 
