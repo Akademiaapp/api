@@ -111,6 +111,13 @@ router.put("/:id", async function (req, res, next) {
     const assignment_id = req.params.id;
     const { status, grade, feedback } = req.query;
 
+    if (!Number(grade)) {
+        res.status(400).json({ error: "Grade must be a number" });
+        return;
+    } else {
+        grade = Number(grade);
+    }
+
     try {
         const assignmentAnswer = await prisma.assignment_answer.findFirst({
             where: {
