@@ -109,7 +109,7 @@ router.get("/:id", async function (req, res, next) {
 router.put("/:id", async function (req, res, next) {
     const user_id = req.user.sub;
     const assignment_id = req.params.id;
-    const { status, grade, feedback } = req.query;
+    let { status, grade, feedback } = req.query;
 
     if (!Number(grade)) {
         res.status(400).json({ error: "Grade must be a number" });
