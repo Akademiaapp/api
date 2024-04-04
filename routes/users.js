@@ -50,7 +50,7 @@ router.post('/self/groups', function (req, res, next) {
 });
 
 async function deleteFromKeycloak(userId) {
-  const url = 'https://akademia-auth.arctix.dev/auth/realms/master/protocol/openid-connect/token';
+  const url = 'https://akademia-auth.arctix.dev/realms/master/protocol/openid-connect/token';
 
   const formData = new URLSearchParams();
   formData.append('client_id', 'admin-cli');
@@ -66,7 +66,9 @@ async function deleteFromKeycloak(userId) {
 
   const token = response.data.access_token;
 
-  const url2 = `https://akademia-auth.arctix.dev/auth/admin/realms/akademia/users/${userId}`;
+  console.log("Found token: ", token);
+
+  const url2 = `https://akademia-auth.arctix.dev/admin/realms/akademia/users/${userId}`;
 
   const response2 = await axios.delete(url2, {
     headers: {
@@ -78,12 +80,14 @@ async function deleteFromKeycloak(userId) {
 } 
 
 router.delete('/self', function (req, res, next) {
-  prisma.user.delete({
-    where: {
-      id: req.userRecord.id,
-    },
-  }).then((data) => {
-    deleteFromKeycloak(req.userRecord.id).then(() => {
+  deleteFromKeycloak(req.userRecord.id).then(() => {
+    res.status(200);
+  }).then(() => {
+    prisma.user.delete({
+      where: {
+        id: req.userRecord.id,
+      },
+    }).then((data) => {
       res.status(200);
     });
   });
