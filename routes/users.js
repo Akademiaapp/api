@@ -66,8 +66,6 @@ async function deleteFromKeycloak(userId) {
 
   const token = response.data.access_token;
 
-  console.log("Found token: ", token);
-
   const url2 = `https://akademia-auth.arctix.dev/admin/realms/akademia/users/${userId}`;
 
   const response2 = await axios.delete(url2, {
@@ -79,18 +77,19 @@ async function deleteFromKeycloak(userId) {
   return response2.data;
 } 
 
-router.delete('/self', function (req, res, next) {
-  deleteFromKeycloak(req.userRecord.id).then(() => {
-    res.status(200);
-  }).then(() => {
-    prisma.user.delete({
+router.delete('/self', async function (req, res, next) {
+  try {
+    await deleteFromKeycloak(req.userRecord.id);
+    await prisma.user.delete({
       where: {
         id: req.userRecord.id,
       },
-    }).then((data) => {
-      res.status(200);
     });
-  });
+    res.status(200).json("User deleted successfully");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Internal server error");
+  }
 });
 
 router.all("*", function (req, res, next) {
