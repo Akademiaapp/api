@@ -1,4 +1,5 @@
 import express from "express";
+import axios from 'axios';
 var router = express.Router();
 
 import { prisma } from "../app.js";
@@ -45,6 +46,46 @@ router.post('/self/groups', function (req, res, next) {
     },
   }).then((data) => {
     res.json(data).status(200);
+  });
+});
+
+async function deleteFromKeycloak(userId) {
+  const url = 'https://akademia-auth.arctix.dev/auth/realms/master/protocol/openid-connect/token';
+
+  const formData = new URLSearchParams();
+  formData.append('client_id', 'admin-cli');
+  formData.append('username', process.env.ADMIN_NAME);
+  formData.append('password', process.env.ADMIN_PASSWORD);
+  formData.append('grant_type', 'password');
+
+  const response = await axios.post(url, formData, {
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  });
+
+  const token = response.data.access_token;
+
+  const url2 = `https://akademia-auth.arctix.dev/auth/admin/realms/akademia/users/${userId}`;
+
+  const response2 = await axios.delete(url2, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response2.data;
+} 
+
+router.delete('/self', function (req, res, next) {
+  prisma.user.delete({
+    where: {
+      id: req.userRecord.id,
+    },
+  }).then((data) => {
+    deleteFromKeycloak(req.userRecord.id).then(() => {
+      res.status(200);
+    });
   });
 });
 
