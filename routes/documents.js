@@ -179,37 +179,26 @@ router.put("/:id/users", async function (req, res, next) {
 	}
 
 	prisma.file_permission
-	    .findUnique({
-	        where: {
-	            document_id: id,
-	            user_id: user.id
-	        }
-	    })
-	    .then(existingPermission => {
-	        if (existingPermission) {
-	            // If permission exists, update it
-	            return prisma.file_permission.update({
-	                where: { id: existingPermission.id },
-	                data: { permission: "WRITE" }
-	            });
-	        } else {
-	            // If permission doesn't exist, create a new one
-	            return prisma.file_permission.create({
-	                data: {
-	                    document_id: id,
-	                    user_id: user.id,
-	                    permission: "WRITE"
-	                }
-	            });
-	        }
-	    })
-	    .then(updatedPermission => {
-	        res.json(updatedPermission).status(200);
-	    })
-	    .catch(error => {
-	        console.error("Error:", error);
-	        res.status(500).json({ error: "Internal Server Error" });
-	    });
+		.upsert({
+			where: {
+				document_user_id: {
+			            document_id: id,
+			            user_id: user.id
+			        }
+			},
+			create: {
+				document_id: id,
+				user_id: user.id,
+				permission: "WRITE",
+			},
+			update: {
+				permission: "WRITE",
+			},
+		})
+		.then((data) => {
+			res.json(data).status(200);
+			return;
+		});
 });
 
 // Get users with access to document - Read
