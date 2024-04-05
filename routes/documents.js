@@ -181,10 +181,8 @@ router.put("/:id/users", async function (req, res, next) {
 	prisma.file_permission
 	    .findUnique({
 	        where: {
-	            document_id_user_id: {
-	                document_id: id,
-	                user_id: user.id
-	            }
+	            document_id: id,
+	            user_id: user.id
 	        }
 	    })
 	    .then(existingPermission => {
