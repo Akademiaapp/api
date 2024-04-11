@@ -143,7 +143,7 @@ router.post("/:id/deploy", async function (req, res, next) {
 		students = [
 			...students,
 			...(await prisma.user_group.findMany({
-				where: { user_id: deployed_assignment.asigned_users_ids },
+				where: { user_id: { in: deployed_assignment.asigned_users_ids } },
 			})),
 		];
 		// Filter out duplicates
