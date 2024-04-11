@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"@akademiaapp/schema": "1.0.26",
+		"@akademiaapp/schema": "1.0.25",
 		"axios": "^1.6.8",
 		"cookie-parser": "~1.4.6",
 		"cors": "^2.8.5",
