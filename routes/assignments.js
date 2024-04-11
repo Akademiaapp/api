@@ -132,40 +132,46 @@ router.post("/:id/deploy", async function (req, res, next) {
 
 		// Create assignment answers for all students in assigned groups
 		const assigned_groups = deployed_assignment.asigned_groups_ids;
-		const students = await prisma.user_group.findMany({
-			where: {
-				groupId: {
-					in: assigned_groups,
+		const students_ids = await prisma.user_group
+			.findMany({
+				where: {
+					groupId: {
+						in: assigned_groups,
+					},
 				},
-			},
-		});
+			})
+			.map((g) => g.userId);
 
-		students = [
-			...students,
-			...(await prisma.user_group.findMany({
-				where: { user_id: { in: deployed_assignment.asigned_users_ids } },
-			})),
+		students_ids = [
+			...students_ids,
+			...(
+				await prisma.user.findMany({
+					where: { user_id: { in: deployed_assignment.asigned_users_ids } },
+				})
+			).map((u) => u.id),
 		];
 		// Filter out duplicates
-		const unique_students = students.filter(
+		const unique_students_ids = students.filter(
 			(v, i, a) => a.findIndex((t) => t.user_id === v.user_id) === i
 		);
 
-		const assignment_answers_promises = unique_students.map(async (student) => {
-			try {
-				const assignment_answer = await prisma.assignment_answer.create({
-					data: {
-						assignment_id: assignment_id,
-						student_id: student.userId,
-						status: "NOT_STARTED",
-					},
-				});
-				return assignment_answer;
-			} catch (error) {
-				console.error("Error creating assignment answer: ", error);
-				return null;
+		const assignment_answers_promises = unique_students_ids.map(
+			async (student_id) => {
+				try {
+					const assignment_answer = await prisma.assignment_answer.create({
+						data: {
+							assignment_id: assignment_id,
+							student_id: student_id,
+							status: "NOT_STARTED",
+						},
+					});
+					return assignment_answer;
+				} catch (error) {
+					console.error("Error creating assignment answer: ", error);
+					return null;
+				}
 			}
-		});
+		);
 
 		const assignment_answers = await Promise.all(assignment_answers_promises);
 
