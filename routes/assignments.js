@@ -142,14 +142,7 @@ router.post("/:id/deploy", async function (req, res, next) {
 			})
 			.map((g) => g.userId);
 
-		students_ids = [
-			...students_ids,
-			...(
-				await prisma.user.findMany({
-					where: { user_id: { in: deployed_assignment.asigned_users_ids } },
-				})
-			).map((u) => u.id),
-		];
+		students_ids = [...students_ids, ...deployed_assignment.asigned_users_ids];
 		// Filter out duplicates
 		const unique_students_ids = students_ids.filter(
 			(v, i, a) => a.findIndex((t) => t === v) === i
