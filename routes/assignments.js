@@ -151,8 +151,8 @@ router.post("/:id/deploy", async function (req, res, next) {
 			).map((u) => u.id),
 		];
 		// Filter out duplicates
-		const unique_students_ids = students.filter(
-			(v, i, a) => a.findIndex((t) => t.user_id === v.user_id) === i
+		const unique_students_ids = students_ids.filter(
+			(v, i, a) => a.findIndex((t) => t === v) === i
 		);
 
 		const assignment_answers_promises = unique_students_ids.map(
