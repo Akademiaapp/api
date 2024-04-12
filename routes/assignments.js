@@ -140,8 +140,8 @@ router.post("/:id/deploy", async function (req, res, next) {
 			},
 		});
 
-		students_ids = [
-			...students_ids.map((g) => g.userId),
+		const students_ids = [
+			...students_groups.map((g) => g.userId),
 			...deployed_assignment.asigned_users_ids,
 		];
 		// Filter out duplicates
