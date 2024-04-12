@@ -132,17 +132,18 @@ router.post("/:id/deploy", async function (req, res, next) {
 
 		// Create assignment answers for all students in assigned groups
 		const assigned_groups = deployed_assignment.asigned_groups_ids;
-		const students_ids = await prisma.user_group
-			.findMany({
-				where: {
-					groupId: {
-						in: assigned_groups,
-					},
+		const students_groups = await prisma.user_group.findMany({
+			where: {
+				groupId: {
+					in: assigned_groups,
 				},
-			})
-			.map((g) => g.userId);
+			},
+		});
 
-		students_ids = [...students_ids, ...deployed_assignment.asigned_users_ids];
+		students_ids = [
+			...students_ids.map((g) => g.userId),
+			...deployed_assignment.asigned_users_ids,
+		];
 		// Filter out duplicates
 		const unique_students_ids = students_ids.filter(
 			(v, i, a) => a.findIndex((t) => t === v) === i
