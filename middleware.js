@@ -1,7 +1,5 @@
-import express from "express";
-var router = express.Router();
 import axios from "axios";
-import { logger, prisma } from "./app.js";
+import { prisma } from "./app.js";
 
 // Middleware to verify JWT
 const verifyToken = async (req, res, next) => {  
@@ -36,9 +34,6 @@ const verifyToken = async (req, res, next) => {
 const verifyUserExists = async (req, res, next) => {
   // Get the user information from the request
   const user = req.user;
-
-  // log the user
-  logger.info("User: ", user);
 
   // Find or create the user in the database
   const userRecord = await prisma.user.upsert({
