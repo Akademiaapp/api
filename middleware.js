@@ -61,6 +61,31 @@ const verifyUserExists = async (req, res, next) => {
     }
   });
 
+  // Check if the user has documents
+  if (userRecord.file_permission.length === 0) {
+    const sampleDocument = await prisma.document.findFirst({
+      where: { 
+        id: 'sample'
+      }
+    });
+    const document = await prisma.document.create({
+			data: {
+				name: 'Eksempel dokument',
+				data: sampleDocument.data,
+				isNote: false,
+				created_at: new Date(),
+				updated_at: new Date(),
+			},
+		});
+		await prisma.file_permission.create({
+			data: {
+				document_id: document.id,
+				user_id: userRecord.id,
+				permission: "OWNER",
+			},
+		});
+  }
+
   // Attach the user record to the request for further processing
   req.userRecord = userRecord;
 
