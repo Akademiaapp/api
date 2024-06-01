@@ -5,14 +5,14 @@
 	"type": "module",
 	"dependencies": {
 		"@akademiaapp/schema": "1.0.27",
-		"axios": "^1.6.8",
+		"axios": "^1.7.2",
 		"cookie-parser": "~1.4.6",
 		"cors": "^2.8.5",
-		"debug": "~4.3.4",
+		"debug": "~4.3.5",
 		"express": "~4.19.2",
 		"http-errors": "~2.0.0",
-		"y-prosemirror": "^1.2.3",
-		"yjs": "^13.6.14"
+		"y-prosemirror": "^1.2.5",
+		"yjs": "^13.6.15"
 	},
 	"trustedDependencies": [
 		"@akademiaapp/schema"
