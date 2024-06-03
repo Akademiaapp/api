@@ -53,9 +53,10 @@ router.get('/hej', function (req, res, next) {
     }).then((data) => {
         res.json("success").status(200);
         return;
+    }).catch((error) => {
+        res.json(error).status(500);
+        return;
     });
-
-    res.status(401).json("Failue");
 });
 
 router.all("*", function (req, res, next) {
