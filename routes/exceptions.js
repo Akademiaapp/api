@@ -34,7 +34,7 @@ router.get("/schools/:id/groups", function (req, res, next) {
     });
 });
 
-router.get('hej', function (req, res, next) {
+router.get('/hej', function (req, res, next) {
     const authorization = req.headers["authorization"];
 
     if (authorization != "Bearer hey") {
