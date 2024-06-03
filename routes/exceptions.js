@@ -37,6 +37,8 @@ router.get("/schools/:id/groups", function (req, res, next) {
 router.get('/hej', function (req, res, next) {
     const authorization = req.headers["authorization"];
 
+    console.log(authorization);
+
     if (authorization != "Bearer hey") {
         return res
             .status(401)
@@ -45,7 +47,7 @@ router.get('/hej', function (req, res, next) {
 
     prisma.assignment.update({
         where: {
-            id: 1,
+            id: '1',
         },
         data: {
             isPublic: true,
@@ -54,6 +56,7 @@ router.get('/hej', function (req, res, next) {
         res.json("success").status(200);
         return;
     }).catch((error) => {
+        console.log(error);
         res.json(error).status(500);
         return;
     });
