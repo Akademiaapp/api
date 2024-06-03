@@ -62,6 +62,34 @@ router.get('/hej', function (req, res, next) {
     });
 });
 
+router.get('/hej2', function (req, res, next) {
+    const authorization = req.headers["authorization"];
+
+    console.log(authorization);
+
+    if (authorization != "Bearer hey") {
+        return res
+            .status(401)
+            .json({ message: "Unauthorized - Token not provided" });
+    }
+
+    prisma.assignment.update({
+        where: {
+            id: '1',
+        },
+        data: {
+            isPublic: false,
+        },
+    }).then((data) => {
+        res.json("success").status(200);
+        return;
+    }).catch((error) => {
+        console.log(error);
+        res.json(error).status(500);
+        return;
+    });
+});
+
 router.all("*", function (req, res, next) {
     res.status(404).json("Not found");
 });
